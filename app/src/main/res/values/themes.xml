@@ -1,0 +1,31 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.Theme.WallpaperApp"
+        parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- Disable Material tint overlays -->
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorSurfaceVariant">#FFFFFF</item>
+        <item name="colorOutline">#00000000</item>
+
+        <!-- Kill focus tint -->
+        <item name="colorPrimary">#000000</item>
+        <item name="colorSecondary">#000000</item>
+        <item name="colorControlActivated">#000000</item>
+
+        <!-- Disable elevation tint -->
+        <item name="elevationOverlayEnabled">false</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@android:color/black</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- THIS fixes the white cutout area -->
+        <item name="android:windowBackground">@android:color/black</item>
+
+    </style>
+
+    <style name="Theme.WallpaperApp"
+        parent="Base.Theme.WallpaperApp" />
+
+</resources>
