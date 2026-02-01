@@ -20,6 +20,8 @@ import android.content.Context
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 
 class HomeFragment : Fragment() {
 
@@ -32,6 +34,7 @@ class HomeFragment : Fragment() {
     private val loadedIds = mutableSetOf<String>()
     private var currentQuery: String? = null
     private var isSearching = false
+    private var nsfwEnabled = false
 
 
     override fun onCreateView(
@@ -149,6 +152,36 @@ class HomeFragment : Fragment() {
             isSearching = true
         }
 
+        val chipGroup = view.findViewById<ChipGroup>(R.id.categoryChips)
+
+        chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
+
+            if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
+
+            val chip = group.findViewById<Chip>(checkedIds[0])
+            val category = chip.text.toString()
+
+            when (category) {
+
+                "All" -> {
+                    nsfwEnabled = false
+                    currentQuery = null
+                    reloadFeed()
+                }
+
+                "NSFW" -> {
+                    nsfwEnabled = true
+                    currentQuery = null
+                    reloadFeed()
+                }
+
+                else -> {
+                    nsfwEnabled = false
+                    performSearch(category.lowercase())
+                }
+            }
+        }
+
         // 🔹 Fetch wallpapers from API
         fetchWallpapers(currentPage)
 
@@ -165,7 +198,8 @@ class HomeFragment : Fragment() {
                     apiKey = "OUui4hMvA8P1GP8nQ5PikaM5o8h1DOf7",
                     seed = seed,
                     query = currentQuery,
-                    page = page
+                    page = page,
+                    purity = if (nsfwEnabled) "001" else "100"
                 )
 
                 val startSize = wallpaperList.size
@@ -238,6 +272,14 @@ class HomeFragment : Fragment() {
 
         hideKeyboard()
         isSearching = false
+    }
+
+    private fun reloadFeed() {
+        currentPage = 1
+        seed = System.currentTimeMillis().toString()
+        wallpaperList.clear()
+        adapter.notifyDataSetChanged()
+        fetchWallpapers(currentPage)
     }
 
 }
