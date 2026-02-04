@@ -10,14 +10,20 @@ import coil.load
 import com.example.wallpaperapp.R
 import com.example.wallpaperapp.data.wallhaven.WallhavenWallpaper
 import com.example.wallpaperapp.ui.preview.PreviewActivity
+import android.widget.TextView
 
 class WallpaperAdapter(
     private val wallpapers: MutableList<WallhavenWallpaper>,
     private val onClick: (WallhavenWallpaper) -> Unit
 ) : RecyclerView.Adapter<WallpaperAdapter.WallpaperViewHolder>() {
 
-    inner class WallpaperViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val image: ImageView = itemView.findViewById(R.id.wallpaperImage)
+    // ✅ in-memory state (no DB yet)
+    private val likedIds: MutableSet<String> = mutableSetOf()
+    private val savedIds: MutableSet<String> = mutableSetOf()
+
+    inner class WallpaperViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val image: ImageView = view.findViewById(R.id.wallpaperImage)
+        val title: TextView = itemView.findViewById(R.id.wallpaperTitle)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WallpaperViewHolder {
@@ -29,20 +35,20 @@ class WallpaperAdapter(
     override fun onBindViewHolder(holder: WallpaperViewHolder, position: Int) {
         val wallpaper = wallpapers[position]
 
-        // ✅ Load thumbnail from URL
+        // ✅ load image
         holder.image.load(wallpaper.thumbs.small) {
             crossfade(true)
             placeholder(R.drawable.placeholder)
             error(R.drawable.placeholder)
         }
 
+        holder.title.text = wallpaper.id.take(8)
+
+        // ✅ open preview
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, PreviewActivity::class.java)
-
-            // ✅ Pass full image URL to preview
             intent.putExtra("imageUrl", wallpaper.path)
-
             context.startActivity(intent)
         }
     }

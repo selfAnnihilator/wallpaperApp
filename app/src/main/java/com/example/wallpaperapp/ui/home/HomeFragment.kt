@@ -18,8 +18,6 @@ import android.widget.EditText
 import android.view.inputmethod.InputMethodManager
 import android.content.Context
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
@@ -35,6 +33,18 @@ class HomeFragment : Fragment() {
     private var currentQuery: String? = null
     private var isSearching = false
     private var nsfwEnabled = false
+    private val categoryMap = mapOf(
+
+        "Nature" to "nature",
+        "Minimal" to "minimal",
+        "Abstract" to "abstract",
+        "Anime" to "anime",
+        "Dark" to "dark",
+        "AMOLED" to "amoled",
+        "Tech" to "technology",
+        "Space" to "space",
+        "Cars" to "car"
+    )
 
 
     override fun onCreateView(
@@ -156,31 +166,43 @@ class HomeFragment : Fragment() {
 
         chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
 
-            if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
+            // ✅ No chip selected → ALL feed
+            if (checkedIds.isEmpty()) {
+                nsfwEnabled = false
+                currentQuery = null
+                reloadFeed()
+                return@setOnCheckedStateChangeListener
+            }
 
             val chip = group.findViewById<Chip>(checkedIds[0])
+
+            chip.animate()
+                .scaleX(1.08f)
+                .scaleY(1.08f)
+                .setDuration(120)
+                .withEndAction {
+                    chip.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(120)
+                        .start()
+                }
+                .start()
+
             val category = chip.text.toString()
 
-            when (category) {
-
-                "All" -> {
-                    nsfwEnabled = false
-                    currentQuery = null
-                    reloadFeed()
-                }
-
-                "NSFW" -> {
-                    nsfwEnabled = true
-                    currentQuery = null
-                    reloadFeed()
-                }
-
-                else -> {
-                    nsfwEnabled = false
-                    performSearch(category.lowercase())
-                }
+            if (category == "NSFW") {
+                nsfwEnabled = true
+                currentQuery = null
+                reloadFeed()
+                return@setOnCheckedStateChangeListener
             }
+
+            nsfwEnabled = false
+            val query = categoryMap[category] ?: category
+            performSearch(query)
         }
+
 
         // 🔹 Fetch wallpapers from API
         fetchWallpapers(currentPage)
@@ -192,6 +214,12 @@ class HomeFragment : Fragment() {
         if (isLoading) return
         isLoading = true
 
+        val sortingMode = when {
+            nsfwEnabled -> "random"
+            currentQuery == null -> "random"      // ALL feed
+            else -> "relevance"                  // category/search
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = ApiClient.api.getWallpapers(
@@ -199,7 +227,9 @@ class HomeFragment : Fragment() {
                     seed = seed,
                     query = currentQuery,
                     page = page,
-                    purity = if (nsfwEnabled) "001" else "100"
+                    purity = if (nsfwEnabled) "001" else "100",
+                    sorting = sortingMode,
+                    order = "desc"
                 )
 
                 val startSize = wallpaperList.size

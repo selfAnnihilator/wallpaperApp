@@ -60,18 +60,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:singleSelection="true"
+                app:selectionRequired="false"
                 app:chipSpacingHorizontal="10dp">
 
                 <!-- ALL FIRST -->
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipAll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="All"
-                    android:checkable="true"
-                    android:checked="true"/>
-
-                <com.google.android.material.chip.Chip
+                    style="@style/WallpaperChip"
                     android:id="@+id/chipNature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -79,6 +73,7 @@
                     android:checkable="true"/>
 
                 <com.google.android.material.chip.Chip
+                    style="@style/WallpaperChip"
                     android:id="@+id/chipMinimal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -86,6 +81,7 @@
                     android:checkable="true"/>
 
                 <com.google.android.material.chip.Chip
+                    style="@style/WallpaperChip"
                     android:id="@+id/chipAbstract"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -93,6 +89,7 @@
                     android:checkable="true"/>
 
                 <com.google.android.material.chip.Chip
+                    style="@style/WallpaperChip"
                     android:id="@+id/chipAnime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -100,6 +97,7 @@
                     android:checkable="true"/>
 
                 <com.google.android.material.chip.Chip
+                    style="@style/WallpaperChip"
                     android:id="@+id/chipDark"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -107,13 +105,7 @@
                     android:checkable="true"/>
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipAMOLED"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AMOLED"
-                    android:checkable="true"/>
-
-                <com.google.android.material.chip.Chip
+                    style="@style/WallpaperChip"
                     android:id="@+id/chipTech"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -121,6 +113,7 @@
                     android:checkable="true"/>
 
                 <com.google.android.material.chip.Chip
+                    style="@style/WallpaperChip"
                     android:id="@+id/chipSpace"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -129,6 +122,7 @@
 
                 <!-- NSFW LAST -->
                 <com.google.android.material.chip.Chip
+                    style="@style/WallpaperChip"
                     android:id="@+id/chipNSFW"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

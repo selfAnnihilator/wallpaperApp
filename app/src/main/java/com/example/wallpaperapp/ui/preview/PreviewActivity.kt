@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import coil.load
 import com.example.wallpaperapp.R
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +20,8 @@ import java.net.URL
 class PreviewActivity : AppCompatActivity() {
 
     private lateinit var imageUrl: String
+    private var liked = false
+    private var saved = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +35,8 @@ class PreviewActivity : AppCompatActivity() {
 
         val imageView = findViewById<ImageView>(R.id.previewImage)
         val downloadButton = findViewById<MaterialButton>(R.id.downloadButton)
+        val btnLike = findViewById<ShapeableImageView>(R.id.btnLike)
+        val btnSave = findViewById<ShapeableImageView>(R.id.btnSave)
 
         imageUrl = intent.getStringExtra("imageUrl") ?: return
 
@@ -44,6 +49,27 @@ class PreviewActivity : AppCompatActivity() {
         downloadButton.setOnClickListener {
             downloadAndSaveImage()
         }
+
+        btnLike.setOnClickListener {
+
+            liked = !liked
+
+            btnLike.setImageResource(
+                if (liked) R.drawable.ic_favorite
+                else R.drawable.ic_favorite_outline
+            )
+        }
+
+        btnSave.setOnClickListener {
+
+            saved = !saved
+
+            btnSave.setImageResource(
+                if (saved) R.drawable.ic_bookmark
+                else R.drawable.ic_bookmark_outline
+            )
+        }
+
 
     }
 
