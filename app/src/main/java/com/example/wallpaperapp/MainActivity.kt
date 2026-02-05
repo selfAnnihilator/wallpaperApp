@@ -1,15 +1,12 @@
 package com.example.wallpaperapp
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.wallpaperapp.ui.home.HomeFragment
 import com.example.wallpaperapp.ui.collections.CollectionsFragment
 import com.example.wallpaperapp.ui.profile.ProfileFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
 
