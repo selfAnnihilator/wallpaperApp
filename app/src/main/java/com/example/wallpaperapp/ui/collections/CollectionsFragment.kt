@@ -2,15 +2,16 @@ package com.example.wallpaperapp.ui.collections
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wallpaperapp.R
 import com.example.wallpaperapp.data.local.CollectionsStore
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.wallpaperapp.data.local.FavoritesStore
 
 class CollectionsFragment : Fragment() {
 
@@ -22,28 +23,7 @@ class CollectionsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = inflater.inflate(
-            R.layout.fragment_collection,
-            container,
-            false
-        )
-
-// ✅ push content below camera / status bar
-        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
-            val top = insets.getInsets(
-                WindowInsetsCompat.Type.statusBars()
-            ).top
-
-            v.setPadding(
-                v.paddingLeft,
-                top + 128,   // extra spacing
-                v.paddingRight,
-                v.paddingBottom
-            )
-
-            insets
-        }
-
+        val view = inflater.inflate(R.layout.fragment_collections, container, false)
 
         recycler = view.findViewById(R.id.collectionsRecycler)
         recycler.layoutManager = LinearLayoutManager(requireContext())
@@ -59,11 +39,17 @@ class CollectionsFragment : Fragment() {
     }
 
     private fun loadCollections() {
-        val names = CollectionsStore
-            .getCollections(requireContext())
-            .sorted()
+        val liked = FavoritesStore.getAllLiked(requireContext())
+        val collections = CollectionsStore.getCollections(requireContext()).sorted()
 
-        adapter = CollectionsAdapter(requireContext(), names)
+        adapter = CollectionsAdapter(
+            requireContext(),
+            liked,
+            collections,
+            onClickLiked = { openLiked() },
+            onClickCollection = { name -> openCollectionDetail(name) }
+        )
+
         recycler.adapter = adapter
     }
 
@@ -73,15 +59,17 @@ class CollectionsFragment : Fragment() {
         AlertDialog.Builder(requireContext())
             .setTitle("New Collection")
             .setView(input)
-            .setPositiveButton("Create") { _, _ ->
+            .setPositiveButton("Save") { _, _ ->
                 val name = input.text.toString().trim()
-                if (name.isNotEmpty()) {
-                    CollectionsStore.createCollection(
-                        requireContext(),
-                        name
-                    )
-                    loadCollections()
-                }
+                if (name.isEmpty()) return@setPositiveButton
+                if (name.equals("Liked", ignoreCase = true)) return@setPositiveButton
+
+                val existing = CollectionsStore.getCollections(requireContext())
+                    .map { it.lowercase() }
+                if (existing.contains(name.lowercase())) return@setPositiveButton
+
+                CollectionsStore.createCollection(requireContext(), name)
+                loadCollections()
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -90,5 +78,19 @@ class CollectionsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         loadCollections()
+    }
+
+    private fun openLiked() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, LikedFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun openCollectionDetail(name: String) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, CollectionDetailFragment.newInstance(name))
+            .addToBackStack(null)
+            .commit()
     }
 }

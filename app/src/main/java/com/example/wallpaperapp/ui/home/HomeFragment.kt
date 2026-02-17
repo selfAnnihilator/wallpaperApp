@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.activity.OnBackPressedCallback
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.example.wallpaperapp.data.local.SettingsStore
 
 class HomeFragment : Fragment() {
 
@@ -32,7 +33,6 @@ class HomeFragment : Fragment() {
     private val loadedIds = mutableSetOf<String>()
     private var currentQuery: String? = null
     private var isSearching = false
-    private var nsfwEnabled = false
     private val categoryMap = mapOf(
 
         "Nature" to "nature",
@@ -168,7 +168,6 @@ class HomeFragment : Fragment() {
 
             // ✅ No chip selected → ALL feed
             if (checkedIds.isEmpty()) {
-                nsfwEnabled = false
                 currentQuery = null
                 reloadFeed()
                 return@setOnCheckedStateChangeListener
@@ -191,14 +190,6 @@ class HomeFragment : Fragment() {
 
             val category = chip.text.toString()
 
-            if (category == "NSFW") {
-                nsfwEnabled = true
-                currentQuery = null
-                reloadFeed()
-                return@setOnCheckedStateChangeListener
-            }
-
-            nsfwEnabled = false
             val query = categoryMap[category] ?: category
             performSearch(query)
         }
@@ -215,19 +206,19 @@ class HomeFragment : Fragment() {
         isLoading = true
 
         val sortingMode = when {
-            nsfwEnabled -> "random"
             currentQuery == null -> "random"      // ALL feed
             else -> "relevance"                  // category/search
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
+                val purity = if (SettingsStore.isNsfw(requireContext())) "001" else "100"
                 val response = ApiClient.api.getWallpapers(
                     apiKey = "OUui4hMvA8P1GP8nQ5PikaM5o8h1DOf7",
                     seed = seed,
                     query = currentQuery,
                     page = page,
-                    purity = if (nsfwEnabled) "001" else "100",
+                    purity = purity,
                     sorting = sortingMode,
                     order = "desc"
                 )

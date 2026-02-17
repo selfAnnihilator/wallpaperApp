@@ -14,6 +14,10 @@ object FavoritesStore {
     // ❤️ FAVORITES (HEART)
     // -------------------------
 
+    fun toggleLike(context: Context, id: String): Boolean {
+        return toggleFavorite(context, id)
+    }
+
     fun toggleFavorite(context: Context, id: String): Boolean {
         val prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE)
         val set = prefs.getStringSet(KEY_FAVORITES, mutableSetOf())!!.toMutableSet()
@@ -33,6 +37,15 @@ object FavoritesStore {
     fun isFavorite(context: Context, id: String): Boolean {
         val prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE)
         return prefs.getStringSet(KEY_FAVORITES, emptySet())!!.contains(id)
+    }
+
+    fun isLiked(context: Context, id: String): Boolean {
+        return isFavorite(context, id)
+    }
+
+    fun getAllLiked(context: Context): List<String> {
+        val prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE)
+        return prefs.getStringSet(KEY_FAVORITES, emptySet())!!.toList()
     }
 
     // -------------------------
@@ -79,5 +92,18 @@ object FavoritesStore {
         val map = prefs.getString(KEY_DOWNLOADS, "{}")!!
         val json = JSONObject(map)
         return json.optInt(id, 0)
+    }
+
+    fun getTotalDownloads(context: Context): Int {
+        val prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE)
+        val map = prefs.getString(KEY_DOWNLOADS, "{}")!!
+        val json = JSONObject(map)
+        var total = 0
+        val keys = json.keys()
+        while (keys.hasNext()) {
+            val key = keys.next()
+            total += json.optInt(key, 0)
+        }
+        return total
     }
 }

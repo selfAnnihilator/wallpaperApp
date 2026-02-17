@@ -47,7 +47,7 @@ class PreviewActivity : AppCompatActivity() {
         // --------------------
 
         btnLike.setImageResource(
-            if (FavoritesStore.isFavorite(this, id))
+            if (FavoritesStore.isLiked(this, id))
                 R.drawable.ic_favorite
             else
                 R.drawable.ic_favorite_outline
@@ -66,7 +66,7 @@ class PreviewActivity : AppCompatActivity() {
 
         btnLike.setOnClickListener {
 
-            val fav = FavoritesStore.toggleFavorite(this, id)
+            val fav = FavoritesStore.toggleLike(this, id)
 
             btnLike.setImageResource(
                 if (fav) R.drawable.ic_favorite
@@ -82,24 +82,11 @@ class PreviewActivity : AppCompatActivity() {
         }
 
         // --------------------
-        // 🔖 SAVE (bookmark)
+        // 🔖 SAVE (bookmark -> add to collection)
         // --------------------
 
         btnSave.setOnClickListener {
-
-            val saved = FavoritesStore.toggleSaved(this, id)
-
-            btnSave.setImageResource(
-                if (saved) R.drawable.ic_bookmark
-                else R.drawable.ic_bookmark_outline
-            )
-
-            Toast.makeText(
-                this,
-                if (saved) "Saved"
-                else "Removed",
-                Toast.LENGTH_SHORT
-            ).show()
+            showCollectionPicker()
         }
 
         // --------------------
@@ -110,6 +97,7 @@ class PreviewActivity : AppCompatActivity() {
             FavoritesStore.addDownload(this, id)
             downloadAndSaveImage()
         }
+
     }
 
     private fun downloadAndSaveImage() {

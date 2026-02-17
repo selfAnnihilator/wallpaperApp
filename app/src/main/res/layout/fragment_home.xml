@@ -120,16 +120,6 @@
                     android:text="Space"
                     android:checkable="true"/>
 
-                <!-- NSFW LAST -->
-                <com.google.android.material.chip.Chip
-                    style="@style/WallpaperChip"
-                    android:id="@+id/chipNSFW"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="NSFW"
-                    android:checkable="true"
-                    android:textColor="#FF5252"/>
-
             </com.google.android.material.chip.ChipGroup>
 
         </HorizontalScrollView>
