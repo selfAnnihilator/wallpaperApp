@@ -8,6 +8,14 @@ import com.example.wallpaperapp.ui.collections.CollectionsFragment
 import com.example.wallpaperapp.ui.profile.ProfileFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.WindowInsetsControllerCompat
+import com.example.wallpaperapp.data.local.AuthStore
+import com.example.wallpaperapp.ui.auth.LoginActivity
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +37,11 @@ class MainActivity : AppCompatActivity() {
             .commit()
 
         bottomNav.setOnItemSelectedListener { menuItem ->
+            if (menuItem.itemId == R.id.nav_collections && !AuthStore.isLoggedIn(this)) {
+                showLoginRequiredDialog()
+                return@setOnItemSelectedListener false
+            }
+
             val fragment = when (menuItem.itemId) {
                 R.id.nav_home -> HomeFragment()
                 R.id.nav_collections -> CollectionsFragment()
@@ -42,5 +55,35 @@ class MainActivity : AppCompatActivity() {
 
             true
         }
+    }
+
+    private fun showLoginRequiredDialog() {
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle("Login Required")
+            .setMessage("Create an account to access collections.")
+            .setPositiveButton("Login") { d, _ ->
+                startActivity(Intent(this, LoginActivity::class.java))
+                d.dismiss()
+            }
+            .setNegativeButton("Cancel") { d, _ ->
+                d.dismiss()
+            }
+            .create()
+
+        dialog.setOnShowListener {
+            val radius = resources.displayMetrics.density * 18f
+            val bg = GradientDrawable().apply {
+                setColor(Color.BLACK)
+                cornerRadius = radius
+            }
+            dialog.window?.setBackgroundDrawable(bg)
+            dialog.findViewById<TextView>(android.R.id.message)?.setTextColor(Color.WHITE)
+            dialog.findViewById<TextView>(com.google.android.material.R.id.alertTitle)
+                ?.setTextColor(Color.WHITE)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(Color.WHITE)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(Color.LTGRAY)
+        }
+
+        dialog.show()
     }
 }

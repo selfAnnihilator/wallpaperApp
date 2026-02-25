@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wallpaperapp.R
-import com.example.wallpaperapp.data.local.FavoritesStore
+import com.example.wallpaperapp.data.local.UserDataStore
 import com.example.wallpaperapp.ui.home.GridSpacingItemDecoration
 import com.google.android.material.appbar.MaterialToolbar
 
@@ -36,7 +36,7 @@ class LikedFragment : Fragment() {
         val spacing = resources.getDimensionPixelSize(R.dimen.grid_spacing)
         recycler.addItemDecoration(GridSpacingItemDecoration(2, spacing, true))
 
-        recycler.adapter = LikedAdapter(FavoritesStore.getAllLiked(requireContext()))
+        recycler.adapter = LikedAdapter(UserDataStore.getUserData(requireContext()).likedImages.toList())
 
         return view
     }
@@ -44,6 +44,6 @@ class LikedFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         view?.findViewById<RecyclerView>(R.id.likedRecycler)?.adapter =
-            LikedAdapter(FavoritesStore.getAllLiked(requireContext()))
+            LikedAdapter(UserDataStore.getUserData(requireContext()).likedImages.toList())
     }
 }

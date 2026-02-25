@@ -10,8 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wallpaperapp.R
-import com.example.wallpaperapp.data.local.CollectionsStore
-import com.example.wallpaperapp.data.local.FavoritesStore
+import com.example.wallpaperapp.data.local.UserDataStore
 
 class CollectionsFragment : Fragment() {
 
@@ -39,8 +38,8 @@ class CollectionsFragment : Fragment() {
     }
 
     private fun loadCollections() {
-        val liked = FavoritesStore.getAllLiked(requireContext())
-        val collections = CollectionsStore.getCollections(requireContext()).sorted()
+        val liked = UserDataStore.getUserData(requireContext()).likedImages.toList()
+        val collections = UserDataStore.getCollections(requireContext()).sorted()
 
         adapter = CollectionsAdapter(
             requireContext(),
@@ -64,11 +63,11 @@ class CollectionsFragment : Fragment() {
                 if (name.isEmpty()) return@setPositiveButton
                 if (name.equals("Liked", ignoreCase = true)) return@setPositiveButton
 
-                val existing = CollectionsStore.getCollections(requireContext())
+                val existing = UserDataStore.getCollections(requireContext())
                     .map { it.lowercase() }
                 if (existing.contains(name.lowercase())) return@setPositiveButton
 
-                CollectionsStore.createCollection(requireContext(), name)
+                UserDataStore.createCollection(requireContext(), name)
                 loadCollections()
             }
             .setNegativeButton("Cancel", null)

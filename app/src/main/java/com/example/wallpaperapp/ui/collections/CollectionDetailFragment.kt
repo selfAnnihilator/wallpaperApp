@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wallpaperapp.R
-import com.example.wallpaperapp.data.local.CollectionsStore
+import com.example.wallpaperapp.data.local.UserDataStore
 import com.example.wallpaperapp.ui.home.GridSpacingItemDecoration
 import com.google.android.material.appbar.MaterialToolbar
 
@@ -49,7 +49,7 @@ class CollectionDetailFragment : Fragment() {
             )
         )
 
-        val images = CollectionsStore.getImages(requireContext(), collectionName)
+        val images = UserDataStore.getCollectionImages(requireContext(), collectionName)
         recycler.adapter = CollectionDetailAdapter(images)
 
         return view

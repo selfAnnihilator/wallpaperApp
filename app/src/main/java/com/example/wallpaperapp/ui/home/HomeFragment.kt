@@ -212,7 +212,13 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val purity = if (SettingsStore.isNsfw(requireContext())) "001" else "100"
+                val nsfwEnabled = SettingsStore.isNsfwEnabled(requireContext())
+                val safeSearch = SettingsStore.isSafeSearchEnabled(requireContext())
+                val purity = if (safeSearch) {
+                    "100"
+                } else {
+                    if (nsfwEnabled) "111" else "100"
+                }
                 val response = ApiClient.api.getWallpapers(
                     apiKey = "OUui4hMvA8P1GP8nQ5PikaM5o8h1DOf7",
                     seed = seed,

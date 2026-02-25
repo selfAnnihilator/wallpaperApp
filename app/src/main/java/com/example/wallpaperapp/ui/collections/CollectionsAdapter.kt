@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.wallpaperapp.R
-import com.example.wallpaperapp.data.local.CollectionsStore
+import com.example.wallpaperapp.data.local.UserDataStore
 
 class CollectionsAdapter(
     private val context: Context,
@@ -67,7 +67,7 @@ class CollectionsAdapter(
             val name = collections[position - 1]
             holder.title.text = name
 
-            val imgs = CollectionsStore.getImages(context, name)
+            val imgs = UserDataStore.getCollectionImages(context, name)
             if (imgs.isNotEmpty()) {
                 holder.preview.load(imgs.first()) {
                     crossfade(true)

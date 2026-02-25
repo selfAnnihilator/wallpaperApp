@@ -1,11 +1,12 @@
 package com.example.wallpaperapp.ui.auth
 
-import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wallpaperapp.R
 import com.example.wallpaperapp.data.local.AuthStore
+import com.example.wallpaperapp.data.local.UserStore
 import com.google.android.material.button.MaterialButton
 
 class LoginActivity : AppCompatActivity() {
@@ -18,25 +19,26 @@ class LoginActivity : AppCompatActivity() {
         val passwordInput = findViewById<EditText>(R.id.inputPassword)
         val btnLogin = findViewById<MaterialButton>(R.id.btnLogin)
         val btnGuest = findViewById<MaterialButton>(R.id.btnGuest)
+        val btnCreateAccount = findViewById<MaterialButton>(R.id.btnCreateAccount)
 
         btnLogin.setOnClickListener {
             val username = usernameInput.text.toString().trim()
-            if (username.isNotEmpty()) {
+            val password = passwordInput.text.toString()
+            val isValid = UserStore.validateUser(this, username, password)
+            if (isValid) {
                 AuthStore.login(this, username)
-                goToMain()
+                finish()
+            } else {
+                Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show()
             }
         }
 
         btnGuest.setOnClickListener {
-            AuthStore.logout(this)
-            goToMain()
+            finish()
         }
-    }
 
-    private fun goToMain() {
-        val intent = Intent(this, com.example.wallpaperapp.MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
-        finish()
+        btnCreateAccount.setOnClickListener {
+            startActivity(android.content.Intent(this, RegisterActivity::class.java))
+        }
     }
 }
